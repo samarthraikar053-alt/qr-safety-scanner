@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Safety Scanner — PS 21</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">QR Safety Scanner</div>
+          <div class="brand-subtitle">Inspect links before opening</div>
+        </div>
+      </div>
+      <span class="ps-pill">PS 21</span>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="scanner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+          <rect x="7" y="7" width="10" height="10" rx="1"/>
+        </svg>
+        Scanner
+      </button>
+      <button class="nav-tab" data-tab="sandbox">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3h6"/><path d="M10 3v6.5L5.2 18.2A2 2 0 0 0 6.9 21h10.2a2 2 0 0 0 1.7-2.8L14 9.5V3"/>
+        </svg>
+        Test Lab
+      </button>
+      <button class="nav-tab" data-tab="history">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>
+        </svg>
+        History <span class="badge-count" id="history-count">0</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: CAMERA SCANNER -->
+    <main id="tab-scanner" class="view-container active">
+      <div class="scanner-card">
+        <video id="camera-video" playsinline muted></video>
+        <canvas id="scan-canvas"></canvas>
+
+        <!-- Viewfinder Overlay -->
+        <div class="viewfinder-overlay" id="viewfinder-overlay">
+          <div class="viewfinder-box">
+            <span class="corner tl"></span>
+            <span class="corner tr"></span>
+            <span class="corner bl"></span>
+            <span class="corner br"></span>
+            <div class="laser-line"></div>
+          </div>
+          <div class="scanner-hint" id="scanner-hint">Align QR code within the frame</div>
+        </div>
+
+        <!-- Camera Start / Permission Placeholder -->
+        <div class="scanner-placeholder" id="camera-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+            <circle cx="12" cy="13" r="3"/>
+          </svg>
+          <h3 id="placeholder-title">Camera Ready</h3>
+          <p id="placeholder-desc">Tap below to activate your webcam or phone camera to scan QR codes in real time, or upload a QR image.</p>
+          <button class="btn-primary" id="btn-start-camera">Start Camera Scanner</button>
+        </div>
+      </div>
+
+      <!-- Camera Controls -->
+      <div class="camera-controls">
+        <button class="control-btn" id="btn-toggle-camera">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span id="label-camera-toggle">Start Cam</span>
+        </button>
+
+        <button class="control-btn" id="btn-torch" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          <span>Flashlight</span>
+        </button>
+
+        <button class="control-btn" id="btn-switch-camera" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          <span>Switch Cam</span>
+        </button>
+
+        <button class="control-btn" id="btn-upload-image">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span>Upload QR</span>
+        </button>
+        <input type="file" id="qr-file-input" accept="image/*" hidden />
+      </div>
+
+      <!-- Quick Manual URL Inspect -->
+      <div class="card">
+        <div class="card-label">Quick Link Security Check</div>
+        <div class="input-row">
+          <input
+            type="text"
+            id="quick-url-input"
+            class="text-input"
+            placeholder="Paste any URL (e.g. http://192.168.1.1/login-verify)"
+          />
+          <button class="btn-primary" id="btn-quick-check">Inspect</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 2: TEST SANDBOX -->
+    <section id="tab-sandbox" class="view-container">
+      <div class="list-header">
+        <h2>Security Heuristics Sandbox</h2>
+      </div>
+      <p class="item-meta">
+        Test every PS 21 heuristic immediately or display a scannable QR code for each link to scan with your camera or upload.
+      </p>
+      <div class="item-list" id="sandbox-list"></div>
+    </section>
+
+    <!-- TAB 3: SCAN HISTORY -->
+    <section id="tab-history" class="view-container">
+      <div class="list-header">
+        <h2>Scan History &amp; Audit Log</h2>
+        <button class="text-btn-danger" id="btn-clear-history">Clear All</button>
+      </div>
+      <div class="item-list" id="history-list"></div>
+    </section>
+  </div>
+
+  <!-- VERDICT MODAL DIALOG -->
+  <div class="modal-backdrop" id="verdict-modal">
+    <div class="modal-card">
+      <div class="modal-icon-circle" id="modal-icon"></div>
+      <h2 class="modal-title" id="modal-title">Security Verdict</h2>
+      <span class="verdict-pill" id="modal-verdict-pill">SAFE</span>
+
+      <div class="url-box">
+        <div class="url-box-top">
+          <span class="url-box-label">EXTRACTED LINK</span>
+          <button class="chip-btn" id="btn-copy-url">Copy URL</button>
+        </div>
+        <div class="url-box-value" id="modal-url-text"></div>
+        <div class="url-box-host" id="modal-host-text"></div>
+      </div>
+
+      <div class="warnings-section" id="modal-warnings-section">
+        <div class="warnings-heading" id="modal-warnings-heading">Flagged Warning Signs</div>
+        <div id="modal-warnings-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-primary" id="btn-dont-open">Don't open</button>
+        <button class="btn-danger-outline" id="btn-open-anyway">Open anyway</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR CODE GENERATOR PREVIEW MODAL (FOR TESTING) -->
+  <div class="modal-backdrop" id="qr-preview-modal">
+    <div class="modal-card">
+      <h2 class="modal-title" id="qr-preview-title">Test QR Code</h2>
+      <img id="qr-preview-img" class="qr-preview-img" alt="Test QR Code" />
+      <div class="url-box">
+        <div class="url-box-label">ENCODED URL</div>
+        <div class="url-box-value" id="qr-preview-url"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="btn-qr-test-now">Simulate Scan Now</button>
+        <a class="btn-secondary" id="btn-qr-download" download="test-qr.png" style="text-decoration:none;width:100%;">Download QR Image</a>
+        <button class="btn-secondary" id="btn-qr-close" style="width:100%;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/vendor/jsQR.js"></script>
+  <script src="/analyzer.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

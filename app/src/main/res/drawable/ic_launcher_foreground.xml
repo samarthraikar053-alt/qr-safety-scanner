@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- QR Scanner Shield Icon -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M54,20 L30,30 L30,55 C30,70 40,82 54,88 C68,82 78,70 78,55 L78,30 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M54,26 L35,34 L35,55 C35,67 43,77 54,82 C65,77 73,67 73,55 L73,34 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M44,45 H50 V51 H44 Z M58,45 H64 V51 H58 Z M44,59 H50 V65 H44 Z M58,59 H64 V65 H58 Z M51,52 H57 V58 H51 Z" />
+</vector>

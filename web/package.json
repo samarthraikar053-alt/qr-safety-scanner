@@ -1,0 +1,14 @@
+{
+  "name": "qr-safety-scanner-web",
+  "version": "1.0.0",
+  "description": "QR Safety Scanner (PS 21) Web App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4"
+  }
+}
